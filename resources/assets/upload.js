@@ -1,54 +1,4 @@
 (function(){
-    var ringChart = function(canvas_id, curr) {
-        var canvas = document.getElementById(canvas_id);
-        var total = 100;
-        var constrast = parseFloat(curr / total).toFixed(2); //比例
-        if(constrast > 1) {return;}
-        canvas.height=canvas.height + 0;
-        var context = null;
-        if (!canvas.getContext) { return;}
-        // 定义开始点的大小
-        var startArc = Math.PI * 1.5;
-        // 根据占的比例画圆弧
-        var endArc = (Math.PI * 2) * constrast;
-        context = canvas.getContext("2d");
-        // 圆心文字
-        context.font = "16px Arial";
-        context.fillStyle = '#ff801a';
-        context.textBaseline = 'middle';
-        var text = (Number(curr / total) * 100).toFixed(0) + "%";
-        var tw = context.measureText(text).width;
-        context.fillText(text, 45 - tw / 2, 45);
-        // 绘制背景圆
-        context.save();
-        context.beginPath();
-        context.strokeStyle = "#e7e7e7";
-        context.lineWidth = "4";
-        context.arc(45, 45, 30, 0, Math.PI * 2, false);
-        context.closePath();
-        context.stroke();
-        context.restore();
-        // 若为百分零则不必再绘制比例圆
-        if (curr / total === 0) { return;}
-        // 绘制比例圆
-        context.save();
-        context.beginPath();
-        context.strokeStyle = "#ff801a";
-        context.lineWidth = "4";
-        context.arc(45, 45, 30, startArc, (curr % total === 0 ? startArc : (endArc + startArc)), false);
-        context.stroke();
-        context.restore();
-
-        // 绘制边框
-        context.save();
-        context.beginPath();
-        context.strokeStyle = "#ff801a";
-        context.lineWidth = "2";
-        context.strokeRect(0,0,90,90);
-        context.stroke();
-        context.restore();
-    };
-
     var accessid = '', host = '', cdn_url = '', policyBase64 = '',
         signature = '', key = '', expire = 0, filename_new = '', file_ext = '';
 
@@ -179,7 +129,6 @@
                             element.hide();
                             upload_warp.prepend('<canvas id="'+file.id+'_canvas" width="90px" height="90px" style="margin-top: 5px;"></canvas>')
                         }
-                        ringChart(file.id+'_canvas', 0);
                     });
                     uploader.start();//选择文件后立即上传
                 },
@@ -190,7 +139,7 @@
                     set_upload_param(up, filename_new); //重设参数
                 },
                 UploadProgress: function(up, file) {
-                    ringChart(file.id+'_canvas', file.percent);
+
                 },
                 FileUploaded: function(up, file, info) {
                     var path = key + filename_new;
@@ -200,18 +149,7 @@
                         $('#'+file.id).html('<span class="upload_del_btn" data-filename="'+path+'" onclick="'+ "del_pic(this,true)" +'">删除</span><video controls src="' + all_path +'">您的浏览器不支持 video 标签。</video><input type="hidden" class="Js_upload_input" name="'+id.split('_')[0]+'[]" value="'+path+'">');
                     }else{
                         $('#'+file.id+'_canvas').remove();
-                        switch (type[0]) {
-                            case 'image':
-                                upload_warp.prepend('<image data-filename="'+path+'" src="' + all_path +'">').find('input.Js_upload_input').val(path);
-                                break;
-                            case 'video':
-                            case 'audio':
-                                upload_warp.prepend('<video controls data-filename="'+path+'" src="' + all_path +'">您的浏览器不支持 video 标签。</video>').find('input.Js_upload_input').val(path);
-                                break;
-                            default:
-                                upload_warp.prepend('<a data-filename="'+path+'" href="' + all_path +'">'+path+'</a>').find('input.Js_upload_input').val(path);
-                                break;
-                        }
+                        upload_warp.prepend('<a data-filename="'+path+'" href="' + all_path +'">'+path+'</a>').find('input.Js_upload_input').val(path);
                     }
                 },
                 Error: function(up, err) {
@@ -254,7 +192,7 @@
                     set_upload_param(up, filename_new); //重设参数
                 },
                 UploadProgress: function(up, file) {
-                    ringChart(file.id+'_canvas', file.percent);
+
                 },
                 FileUploaded: function(up, file, info) {
                     var path = key + filename_new;
