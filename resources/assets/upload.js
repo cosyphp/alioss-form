@@ -165,10 +165,7 @@
             multipart_params: { '_token' : token },
             //过滤
             filters : {
-                max_file_size : '5gb',
-                mime_types: [
-                    {title : "文件", extensions : "gif,jpeg,jpg,png,bmp,text,txt,doc,docx,ppt,pptx,xls,xlsx,pdf,mp3,wav,aac,flac,avi,mov,flv,mp4,3gp"}
-                ]
+                max_file_size : '5gb'
             },
 
             init: {
@@ -243,10 +240,7 @@
             multipart_params: { '_token' : token },
             //过滤
             filters : {
-                max_file_size : '5gb',
-                mime_types: [
-                    {title : "文件", extensions : "text,txt,doc,docx,ppt,pptx,xls,xlsx,pdf,mp3,wav,aac,flac,avi,mov,flv,mp4,3gp"}
-                ]
+                max_file_size : '5gb'
             },
             init: {
                 FilesAdded: function(up, files) {

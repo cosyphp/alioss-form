@@ -8,11 +8,11 @@ class Editor extends Field
 {
     protected $view = 'alioss-form::editor';
     protected static $css = [
-        'vendor/airan/alioss-form/wangEditor-3.0.10/release/wangEditor.min.css',
+        'vendor/cosyphp/alioss-form/wangEditor-3.0.10/release/wangEditor.min.css',
     ];
     protected static $js = [
-        'vendor/airan/alioss-form/wangEditor-3.0.10/release/wangEditor.min.js',
-        'vendor/airan/alioss-form/upload.min.js',
+        'vendor/cosyphp/alioss-form/wangEditor-3.0.10/release/wangEditor.min.js',
+        'vendor/cosyphp/alioss-form/upload.js',
     ];
     public function render()
     {

@@ -8,14 +8,12 @@ class File extends Field
 {
     protected $view = 'alioss-form::file';
     protected static $css = [
-        'vendor/airan/alioss-form/style.css',
+        'vendor/cosyphp/alioss-form/style.css',
     ];
     protected static $js = [
-        'vendor/airan/alioss-form/plupload-2.1.2/js/moxie.js',
-        'vendor/airan/alioss-form/plupload-2.1.2/js/plupload.dev.js',
-        'vendor/airan/alioss-form/upload.js',
-//         'vendor/airan/alioss-form/plupload-2.1.2/js/plupload.full.min.js',
-//         'vendor/airan/alioss-form/upload.min.js',
+        'vendor/cosyphp/alioss-form/plupload-2.1.2/js/moxie.js',
+        'vendor/cosyphp/alioss-form/plupload-2.1.2/js/plupload.dev.js',
+        'vendor/cosyphp/alioss-form/upload.js',
     ];
     public function render()
     {

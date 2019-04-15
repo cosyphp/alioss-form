@@ -23,7 +23,7 @@ class AliOssFormServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole() && $assets = $extension->assets()) {
             $this->publishes(
-                [$assets => public_path('vendor/airan/alioss-form')],
+                [$assets => public_path('vendor/cosyphp/alioss-form')],
                 'alioss-form'
             );
         }
