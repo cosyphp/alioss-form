@@ -11,8 +11,11 @@ class File extends Field
         'vendor/airan/alioss-form/style.css',
     ];
     protected static $js = [
-        'vendor/airan/alioss-form/plupload-2.1.2/js/plupload.full.min.js',
-        'vendor/airan/alioss-form/upload.min.js',
+        'vendor/airan/alioss-form/plupload-2.1.2/js/moxie.js',
+        'vendor/airan/alioss-form/plupload-2.1.2/js/plupload.dev.js',
+        'vendor/airan/alioss-form/upload.js',
+//         'vendor/airan/alioss-form/plupload-2.1.2/js/plupload.full.min.js',
+//         'vendor/airan/alioss-form/upload.min.js',
     ];
     public function render()
     {

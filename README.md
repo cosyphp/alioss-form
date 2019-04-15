@@ -4,7 +4,7 @@ laravel-admin extension
 
 ### 安装
 ```
-composer require airan/alioss-form
+composer require cosyphp/alioss-form
 php artisan vendor:publish --tag=alioss-form
 ```
 ### 配置
