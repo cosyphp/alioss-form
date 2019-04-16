@@ -28,9 +28,9 @@
                 </div>
             </div>
         @endif
-        <div style="position:absolute;width:100%;display:none;">
-            <canvas id="progress_canvas" width="90px" height="90px" style="margin-top: 5px;"></canvas>
-        <div>
         @include('admin::form.help-block')
+    </div>
+    <div id="progress_box" style="position:absolute;z-index:99;width:100%;text-align:center;display:none;">
+        <canvas id="progress_canvas" width="90px" height="90px" style="margin-top: 10px;"></canvas>
     </div>
 </div>
