@@ -1,6 +1,47 @@
 (function(){
+    var ringChart = function(canvas_id, curr) {
+        var canvas = document.getElementById(canvas_id);
+        var total = 100;
+        var constrast = parseFloat(curr / total).toFixed(2); //比例
+        if(constrast > 1) {return;}
+        canvas.height = canvas.height + 0;
+        var context = null;
+        if (!canvas.getContext) { return;}
+        // 定义开始点的大小
+        var startArc = Math.PI * 1.5;
+        // 根据占的比例画圆弧
+        var endArc = (Math.PI * 2) * constrast;
+        context = canvas.getContext("2d");
+        // 圆心文字
+        context.font = "16px Arial";
+        context.fillStyle = '#ff801a';
+        context.textBaseline = 'middle';
+        var text = (Number(curr / total) * 100).toFixed(0) + "%";
+        var tw = context.measureText(text).width;
+        context.fillText(text, 45 - tw / 2, 45);
+        // 绘制背景圆
+        context.save();
+        context.beginPath();
+        context.strokeStyle = "#e7e7e7";
+        context.lineWidth = "4";
+        context.arc(45, 45, 30, 0, Math.PI * 2, false);
+        context.closePath();
+        context.stroke();
+        context.restore();
+        // 若为百分零则不必再绘制比例圆
+        if (curr / total === 0) { return;}
+        // 绘制比例圆
+        context.save();
+        context.beginPath();
+        context.strokeStyle = "#ff801a";
+        context.lineWidth = "4";
+        context.arc(45, 45, 30, startArc, (curr % total === 0 ? startArc : (endArc + startArc)), false);
+        context.stroke();
+        context.restore();
+    };
+
     var accessid = '', host = '', cdn_url = '', policyBase64 = '',
-        signature = '', key = '', expire = 0, filename_new = '', file_ext = '';
+        signature = '', key = '', expire = 0, file_ext = '';
 
     //获取签名函数
     function get_signature(callback) {
@@ -59,46 +100,11 @@
         return pwd;
     }
 
-    // 删除事件
-    window.del_pic = function(obj, multi) {
-        obj = $(obj);
-        var filename = '';
-        if(multi) {
-            filename = obj.attr('data-filename');
-            var upload_warp = obj.parents('div.upload_warp');
-            obj.parents('div.upload_item').remove();
-            if(upload_warp.find('.upload_item').length === 0) {
-                upload_warp.hide();
-            }
-        }else{
-            var warp = obj.parent();
-            filename = warp.find('img').attr('data-filename');
-            warp.find('img').remove();
-            warp.find('.upload_add_img').show();
-            warp.find('input.Js_upload_input').val('');
-        }
-    }
-
     // 图片上传
     window.init_upload = function(id, multi, token){
-        var element = $('#'+id);
-        var upload_warp = multi ? $(element.attr('data-warp')) : element.parents('.Js_upload_warp');
-        var container = $('<div style="height:0px;width:0px;display:none"></div>').appendTo(upload_warp);
-        if(multi) {
-            Sortable.create(upload_warp.get(0), {
-                group: {
-                    pull: false,
-                    put: false
-                },
-                handle: 'img',
-                ghostClass: 'upload_ghost',
-                chosenClass: 'upload_chose',
-            });
-        }
         var uploader = new plupload.Uploader({
             runtimes : 'html5,flash,silverlight,html4',
             browse_button : id,//'pickfiles',
-            container: container.get(0),//document.getElementById('container'),
             url : '/admin/upload_file',
             flash_swf_url : './plupload-2.1.2/Moxie.swf',
             silverlight_xap_url : './plupload-2.1.2/Moxie.xap',
@@ -111,17 +117,22 @@
 
             init: {
                 FilesAdded: function(up, files) {
+                    plupload.each(files, function(file) {
+                        $('#progress_box').show();
+                        ringChart('progress_canvas', 0);
+                    });
                     uploader.start();//选择文件后立即上传
                 },
                 BeforeUpload: function(up, file) {
                     set_upload_param(up, file.name); //重设参数
                 },
                 UploadProgress: function(up, file) {
-
+                    ringChart('progress_canvas', file.percent);
                 },
                 FileUploaded: function(up, file, info) {
                     var path = key + '/' + file.name;
                     $('input.Js_upload_input').val(path);
+                    $('#progress_box').hide();
                 },
                 Error: function(up, err) {
                     alert("抱歉！出错了：" + err.message);
