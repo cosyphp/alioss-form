@@ -35,7 +35,7 @@
         //获取签名
         get_signature(function(){
             new_multipart_params = {
-                'key': key + filename,//+ '${filename}',
+                'key': key + '/' + filename,
                 'policy': policyBase64,
                 'OSSAccessKeyId': accessid,
                 'success_action_status': '200',//让服务端返回200, 默认204
@@ -57,15 +57,6 @@
             pwd += chars.charAt(Math.floor(Math.random() * maxPos));
         }
         return pwd;
-    }
-    //获取文件的后缀名
-    function get_suffix(filename) {
-        var pos = filename.lastIndexOf('.');
-        var suffix = '';
-        if (pos !== -1) {
-            suffix = filename.substring(pos)
-        }
-        return suffix.toLowerCase();
     }
 
     // 删除事件
@@ -120,85 +111,17 @@
 
             init: {
                 FilesAdded: function(up, files) {
-                    plupload.each(files, function(file) {
-                        if(multi) {
-                            // 多图
-                            upload_warp.css('opacity',1).append('<div class="upload_item" id="'+file.id+'"><canvas id="'+file.id+'_canvas" width="90px" height="90px"></canvas></div>').show();
-                        }else{
-                            // 单图
-                            element.hide();
-                            upload_warp.prepend('<canvas id="'+file.id+'_canvas" width="90px" height="90px" style="margin-top: 5px;"></canvas>')
-                        }
-                    });
                     uploader.start();//选择文件后立即上传
                 },
                 BeforeUpload: function(up, file) {
-                    //设置新文件名
-                    file_ext = get_suffix(file.name); //后缀名
-                    filename_new = Date.parse(new Date()) / 1000 + '_' + random_string(10) + file_ext;
-                    set_upload_param(up, filename_new); //重设参数
+                    set_upload_param(up, file.name); //重设参数
                 },
                 UploadProgress: function(up, file) {
 
                 },
                 FileUploaded: function(up, file, info) {
-                    var path = key + filename_new;
-                    var all_path = cdn_url + '/' + path;
-                    var type = file.type.split('/');
-                    if(multi) {
-                        $('#'+file.id).html('<span class="upload_del_btn" data-filename="'+path+'" onclick="'+ "del_pic(this,true)" +'">删除</span><video controls src="' + all_path +'">您的浏览器不支持 video 标签。</video><input type="hidden" class="Js_upload_input" name="'+id.split('_')[0]+'[]" value="'+path+'">');
-                    }else{
-                        $('#'+file.id+'_canvas').remove();
-                        upload_warp.prepend('<a data-filename="'+path+'" href="' + all_path +'">'+path+'</a>').find('input.Js_upload_input').val(path);
-                    }
-                },
-                Error: function(up, err) {
-                    alert("抱歉！出错了：" + err.message);
-                }
-            }
-        });
-        //初始化上传
-        uploader.init();
-    }
-
-    // 编辑器图片上传
-    window.init_upload_edit = function(editor, token){
-        var btnId = editor.imgMenuId;
-        var containerId = editor.toolbarElemId;
-        var textElemId = editor.textElemId;
-        var container = $('<div style="height:0;width:0;display:none"></div>').appendTo('body');
-        var uploader = new plupload.Uploader({
-            runtimes : 'html5,flash,silverlight,html4',
-            browse_button : btnId,//'pickfiles',
-            container: container.get(0),//document.getElementById('container'),
-            url : '/admin/upload_file',
-            flash_swf_url : './plupload-2.1.2/Moxie.swf',
-            silverlight_xap_url : './plupload-2.1.2/Moxie.xap',
-            multi_selection: false,//false单选，true多选
-            multipart_params: { '_token' : token },
-            //过滤
-            filters : {
-                max_file_size : '5gb'
-            },
-            init: {
-                FilesAdded: function(up, files) {
-                    var file = files[0];
-                    editor.cmd.do('insertHtml', '<canvas id="'+file.id+'_canvas" width="90px" height="90px" style="margin-top: 5px;"></canvas>');
-                    uploader.start();//选择文件后立即上传
-                },
-                BeforeUpload: function(up, file) {
-                    file_ext = get_suffix(file.name); //后缀名
-                    filename_new = Date.parse(new Date()) / 1000 + '_' + random_string(10) + file_ext;
-                    set_upload_param(up, filename_new); //重设参数
-                },
-                UploadProgress: function(up, file) {
-
-                },
-                FileUploaded: function(up, file, info) {
-                    var path = key + filename_new;
-                    var all_path = cdn_url + '/' + path;
-                    $('#'+file.id+'_canvas').remove();
-                    editor.cmd.do('insertHtml', '<img src="' + all_path + '" style="max-width:100%;"/>');
+                    var path = key + '/' + file.name;
+                    $('input.Js_upload_input').val(path);
                 },
                 Error: function(up, err) {
                     alert("抱歉！出错了：" + err.message);
