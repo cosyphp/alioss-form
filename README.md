@@ -24,12 +24,12 @@ return [
 
 ### 使用
 ```
-$form->file('pic', '单图');
+$form->file('file', '文件');
 $form->image('images', '多图');
 $form->editor('content', '编辑器');
 ```
 
 ### 截图
-![](https://github.com/airan587/alioss-form/blob/master/1.PNG?raw=true)
+![](https://github.com/cosyphp/alioss-form/blob/master/sample.png?raw=true)
 
 

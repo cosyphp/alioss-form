@@ -58,7 +58,7 @@
         if (expire < now + 300) {//300s缓冲
             //ajax
             $.ajax({
-                url:'/backend/alioss_param',
+                url:'/admin/alioss_param',
                 type:'get',
                 dataType:'json',
                 async: false,//同步
@@ -122,11 +122,20 @@
     window.del_pic = function(obj, multi) {
         obj = $(obj);
         var filename = '';
-        var warp = obj.parent();
-        filename = warp.find('img,a,audio,video').attr('data-filename');
-        warp.find('img,a,audio,video').remove();
-        warp.find('.upload_add_img').show();
-        warp.find('input.Js_upload_input').val('');
+        if(multi) {
+            filename = obj.attr('data-filename');
+            var upload_warp = obj.parents('div.upload_warp');
+            obj.parents('div.upload_item').remove();
+            if(upload_warp.find('.upload_item').length === 0) {
+                upload_warp.hide();
+            }
+        }else{
+            var warp = obj.parent();
+            filename = warp.find('img').attr('data-filename');
+            warp.find('img').remove();
+            warp.find('.upload_add_img').show();
+            warp.find('input.Js_upload_input').val('');
+        }
     }
 
     // 图片上传
@@ -134,34 +143,45 @@
         var element = $('#'+id);
         var upload_warp = multi ? $(element.attr('data-warp')) : element.parents('.Js_upload_warp');
         var container = $('<div style="height:0px;width:0px;display:none"></div>').appendTo(upload_warp);
+        if(multi) {
+            Sortable.create(upload_warp.get(0), {
+                group: {
+                    pull: false,
+                    put: false
+                },
+                handle: 'img',
+                ghostClass: 'upload_ghost',
+                chosenClass: 'upload_chose',
+            });
+        }
         var uploader = new plupload.Uploader({
             runtimes : 'html5,flash,silverlight,html4',
             browse_button : id,//'pickfiles',
             container: container.get(0),//document.getElementById('container'),
-            url : '/backend/upload_file',
+            url : '/admin/upload_file',
             flash_swf_url : './plupload-2.1.2/Moxie.swf',
             silverlight_xap_url : './plupload-2.1.2/Moxie.xap',
             multi_selection: multi,//false单选，true多选
             multipart_params: { '_token' : token },
             //过滤
             filters : {
-                max_file_size : '5gb',
+                max_file_size : '10mb',
                 mime_types: [
-                    {title : "文件", extensions : "gif,jpeg,jpg,png,bmp,text,txt,doc,docx,ppt,pptx,xls,xlsx,pdf,mp3,wav,aac,flac,avi,mov,flv,mp4,3gp"}
+                    {title : "Image files", extensions : "jpg,jpeg,gif,png"}
                 ]
             },
 
             init: {
                 FilesAdded: function(up, files) {
                     plupload.each(files, function(file) {
-                        // if(multi) {
-                        //     // 多图
-                        //     upload_warp.css('opacity',1).append('<div class="upload_item" id="'+file.id+'"><canvas id="'+file.id+'_canvas" width="90px" height="90px"></canvas></div>').show();
-                        // }else{
+                        if(multi) {
+                            // 多图
+                            upload_warp.css('opacity',1).append('<div class="upload_item" id="'+file.id+'"><canvas id="'+file.id+'_canvas" width="90px" height="90px"></canvas></div>').show();
+                        }else{
                             // 单图
                             element.hide();
                             upload_warp.prepend('<canvas id="'+file.id+'_canvas" width="90px" height="90px" style="margin-top: 5px;"></canvas>')
-                        // }
+                        }
                         ringChart(file.id+'_canvas', 0);
                     });
                     uploader.start();//选择文件后立即上传
@@ -178,24 +198,63 @@
                 FileUploaded: function(up, file, info) {
                     var path = key + filename_new;
                     var all_path = cdn_url + '/' + path;
-                    var type = file.type.split('/');
-                    // if(multi) {
-                    //     $('#'+file.id).html('<span class="upload_del_btn" data-filename="'+path+'" onclick="'+ "del_pic(this,true)" +'">删除</span><video controls src="' + all_path +'">您的浏览器不支持 video 标签。</video><input type="hidden" class="Js_upload_input" name="'+id.split('_')[0]+'[]" value="'+path+'">');
-                    // }else{
+                    if(multi) {
+                        $('#'+file.id).html('<span class="upload_del_btn" data-filename="'+path+'" onclick="'+ "del_pic(this,true)" +'">删除</span><img src="' + all_path +'?x-oss-process=image/resize,m_fill,w_100,h_100"><input type="hidden" class="Js_upload_input" name="'+id.split('_')[0]+'[]" value="'+path+'">');
+                    }else{
                         $('#'+file.id+'_canvas').remove();
-                        switch (type[0]) {
-                            case 'image':
-                                upload_warp.prepend('<image data-filename="'+path+'" src="' + all_path +'">').find('input.Js_upload_input').val(path);
-                                break;
-                            case 'video':
-                            case 'audio':
-                                upload_warp.prepend('<video controls data-filename="'+path+'" src="' + all_path +'">您的浏览器不支持 video 标签。</video>').find('input.Js_upload_input').val(path);
-                                break;
-                            default:
-                                upload_warp.prepend('<a data-filename="'+path+'" href="' + all_path +'">'+path+'</a>').find('input.Js_upload_input').val(path);
-                                break;
-                        }
-                    // }
+                        upload_warp.prepend('<img data-filename="'+path+'" src="' + all_path +'?x-oss-process=image/resize,m_fill,w_100,h_100">').find('input.Js_upload_input').val(path);
+                    }
+                },
+                Error: function(up, err) {
+                    alert("抱歉！出错了：" + err.message);
+                }
+            }
+        });
+        //初始化上传
+        uploader.init();
+    }
+
+    // 编辑器图片上传
+    window.init_upload_edit = function(editor, token){
+        var btnId = editor.imgMenuId;
+        var containerId = editor.toolbarElemId;
+        var textElemId = editor.textElemId;
+        var container = $('<div style="height:0;width:0;display:none"></div>').appendTo('body');
+        var uploader = new plupload.Uploader({
+            runtimes : 'html5,flash,silverlight,html4',
+            browse_button : btnId,//'pickfiles',
+            container: container.get(0),//document.getElementById('container'),
+            url : '/admin/upload_file',
+            flash_swf_url : './plupload-2.1.2/Moxie.swf',
+            silverlight_xap_url : './plupload-2.1.2/Moxie.xap',
+            multi_selection: false,//false单选，true多选
+            multipart_params: { '_token' : token },
+            //过滤
+            filters : {
+                max_file_size : '10mb',
+                mime_types: [
+                    {title : "Image files", extensions : "jpg,jpeg,gif,png"}
+                ]
+            },
+            init: {
+                FilesAdded: function(up, files) {
+                    var file = files[0];
+                    editor.cmd.do('insertHtml', '<canvas id="'+file.id+'_canvas" width="90px" height="90px" style="margin-top: 5px;"></canvas>');
+                    uploader.start();//选择文件后立即上传
+                },
+                BeforeUpload: function(up, file) {
+                    file_ext = get_suffix(file.name); //后缀名
+                    filename_new = Date.parse(new Date()) / 1000 + '_' + random_string(10) + file_ext;
+                    set_upload_param(up, filename_new); //重设参数
+                },
+                UploadProgress: function(up, file) {
+                    ringChart(file.id+'_canvas', file.percent);
+                },
+                FileUploaded: function(up, file, info) {
+                    var path = key + filename_new;
+                    var all_path = cdn_url + '/' + path;
+                    $('#'+file.id+'_canvas').remove();
+                    editor.cmd.do('insertHtml', '<img src="' + all_path + '" style="max-width:100%;"/>');
                 },
                 Error: function(up, err) {
                     alert("抱歉！出错了：" + err.message);

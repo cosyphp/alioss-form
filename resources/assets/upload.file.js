@@ -41,7 +41,7 @@
     };
 
     var accessid = '', host = '', cdn_url = '', policyBase64 = '',
-        signature = '', key = '', expire = 0, file_ext = '';
+        signature = '', key = '', expire = 0;
 
     //获取签名函数
     function get_signature(callback) {
@@ -88,27 +88,16 @@
             });
         });
     }
-    //指定长度的随机字符串
-    function random_string(len) {
-        len = len || 32;
-        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        var maxPos = chars.length;
-        var pwd = '';
-        for (i = 0; i < len; i++) {
-            pwd += chars.charAt(Math.floor(Math.random() * maxPos));
-        }
-        return pwd;
-    }
 
     // 图片上传
-    window.init_upload = function(id, multi, token){
+    window.init_upload_file = function(id, multi, token){
         var uploader = new plupload.Uploader({
             runtimes : 'html5,flash,silverlight,html4',
             browse_button : id,//'pickfiles',
             url : '/admin/upload_file',
             flash_swf_url : './plupload-2.1.2/Moxie.swf',
             silverlight_xap_url : './plupload-2.1.2/Moxie.xap',
-            multi_selection: multi,//false单选，true多选
+            multi_selection: false,//false单选，true多选
             multipart_params: { '_token' : token },
             //过滤
             filters : {
@@ -129,9 +118,9 @@
                 UploadProgress: function(up, file) {
                     ringChart('progress_canvas', file.percent);
                 },
-                FileUploaded: function(up, file, info) {
+                FileUploaded: function(up, file) {
                     var path = key + '/' + file.name;
-                    $('input.Js_upload_input').val(path);
+                    $('#js_upload_file').val(path);
                     $('#progress_box').hide();
                 },
                 Error: function(up, err) {
