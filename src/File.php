@@ -20,7 +20,7 @@ class File extends Field
         $name = $this->formatName($this->column);
         $token = csrf_token();
         $this->script = <<<EOT
-init_upload('{$name}_upload',false,'{$token}');
+init_upload_file('{$name}_upload',false,'{$token}');
 EOT;
         return parent::render();
     }

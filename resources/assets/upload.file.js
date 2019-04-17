@@ -1,5 +1,5 @@
 (function(){
-    var ringChart = function(canvas_id, curr) {
+    var fileChart = function(canvas_id, curr) {
         var canvas = document.getElementById(canvas_id);
         var total = 100;
         var constrast = parseFloat(curr / total).toFixed(2); //比例
@@ -41,7 +41,7 @@
     };
 
     var accessid = '', host = '', cdn_url = '', policyBase64 = '',
-        signature = '', key = '', expire = 0;
+        signature = '', key = '', expire = 0, file_ext = '';
 
     //获取签名函数
     function get_signature(callback) {
@@ -97,7 +97,7 @@
             url : '/admin/upload_file',
             flash_swf_url : './plupload-2.1.2/Moxie.swf',
             silverlight_xap_url : './plupload-2.1.2/Moxie.xap',
-            multi_selection: false,//false单选，true多选
+            multi_selection: multi,//false单选，true多选
             multipart_params: { '_token' : token },
             //过滤
             filters : {
@@ -108,7 +108,7 @@
                 FilesAdded: function(up, files) {
                     plupload.each(files, function(file) {
                         $('#progress_box').show();
-                        ringChart('progress_canvas', 0);
+                        fileChart('progress_canvas', 0);
                     });
                     uploader.start();//选择文件后立即上传
                 },
@@ -116,9 +116,9 @@
                     set_upload_param(up, file.name); //重设参数
                 },
                 UploadProgress: function(up, file) {
-                    ringChart('progress_canvas', file.percent);
+                    fileChart('progress_canvas', file.percent);
                 },
-                FileUploaded: function(up, file) {
+                FileUploaded: function(up, file, info) {
                     var path = key + '/' + file.name;
                     $('#js_upload_file').val(path);
                     $('#progress_box').hide();

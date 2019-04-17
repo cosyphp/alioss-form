@@ -139,7 +139,7 @@
     }
 
     // 图片上传
-    window.init_upload = function(id, multi, token){
+    window.init_upload_image = function(id, multi, token){
         var element = $('#'+id);
         var upload_warp = multi ? $(element.attr('data-warp')) : element.parents('.Js_upload_warp');
         var container = $('<div style="height:0px;width:0px;display:none"></div>').appendTo(upload_warp);

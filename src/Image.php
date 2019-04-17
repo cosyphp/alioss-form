@@ -20,7 +20,7 @@ class Image extends Field
         $name = $this->formatName($this->column);
         $token = csrf_token();
         $this->script = <<<EOT
-init_upload('{$name}_upload',true,'{$token}');
+init_upload_image('{$name}_upload',true,'{$token}');
 EOT;
         return parent::render();
     }
