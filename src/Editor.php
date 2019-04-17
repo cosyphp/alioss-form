@@ -12,7 +12,7 @@ class Editor extends Field
     ];
     protected static $js = [
         'vendor/cosyphp/alioss-form/wangEditor-3.0.10/release/wangEditor.min.js',
-        'vendor/cosyphp/alioss-form/upload.js',
+        'vendor/cosyphp/alioss-form/upload.image.js',
     ];
     public function render()
     {

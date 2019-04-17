@@ -13,7 +13,7 @@ class Image extends Field
     protected static $js = [
         'vendor/cosyphp/alioss-form/Sortable.min.js',
         'vendor/cosyphp/alioss-form/plupload-2.1.2/js/plupload.full.min.js',
-        'vendor/cosyphp/alioss-form/upload.js',
+        'vendor/cosyphp/alioss-form/upload.image.js',
     ];
     public function render()
     {

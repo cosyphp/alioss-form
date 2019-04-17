@@ -13,7 +13,7 @@ class File extends Field
     protected static $js = [
         'vendor/cosyphp/alioss-form/plupload-2.1.2/js/moxie.js',
         'vendor/cosyphp/alioss-form/plupload-2.1.2/js/plupload.dev.js',
-        'vendor/cosyphp/alioss-form/upload.js',
+        'vendor/cosyphp/alioss-form/upload.file.js',
     ];
     public function render()
     {
