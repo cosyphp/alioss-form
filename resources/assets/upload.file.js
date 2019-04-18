@@ -107,8 +107,8 @@
             init: {
                 FilesAdded: function(up, files) {
                     plupload.each(files, function(file) {
-                        $('#progress_box').show();
-                        fileChart('progress_canvas', 0);
+                        $('#'+id+'_progress_box').show();
+                        fileChart(id+'_progress_canvas', 0);
                     });
                     uploader.start();//选择文件后立即上传
                 },
@@ -116,12 +116,12 @@
                     set_upload_param(up, file.name); //重设参数
                 },
                 UploadProgress: function(up, file) {
-                    fileChart('progress_canvas', file.percent);
+                    fileChart(id+'_progress_canvas', file.percent);
                 },
                 FileUploaded: function(up, file, info) {
                     var path = key + '/' + file.name;
-                    $('#js_upload_file').val(path);
-                    $('#progress_box').hide();
+                    $('#'+id+'_file').val(path);
+                    $('#'+id+'_progress_box').hide();
                 },
                 Error: function(up, err) {
                     alert("抱歉！出错了：" + err.message);
