@@ -16,8 +16,9 @@ class AliOssFormController extends Controller
         $host = $config['OSS_HOST'];
         // CDN 前端显示URL
         $cdn_url = $config['OSS_URL'];
+        $oss_path = $config['OSS_PATH'];
 
-        $dir = 'file/'.date('Ym').'/'.date('d');          // 用户上传文件时指定的前缀。 file/201812/01
+        $dir = $oss_path.'/'.date('Ym').'/'.date('d');          // 用户上传文件时指定的前缀。 file/201812/01
 
         $now = time();
         $expire = 300;  //设置该policy超时时间是300s. 即这个policy过了这个有效时间，将不能访问。
