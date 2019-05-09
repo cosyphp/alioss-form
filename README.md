@@ -24,8 +24,8 @@ return [
 
 ### 使用
 ```
-$form->file('file', '文件');
-$form->image('images', '多图');
+$form->oneFile('file', '文件');
+$form->images('images', '多图');
 $form->editor('content', '编辑器');
 ```
 
