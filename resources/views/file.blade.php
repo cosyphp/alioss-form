@@ -1,8 +1,14 @@
 <div class="{{$viewClass['form-group']}} {!! !$errors->has($errorKey) ? '' : 'has-error' !!}">
-    <label for="{{$id}}" class="{{$viewClass['label']}} control-label">{{$label}}</label>
+    <label for="{{$id}}" class="{{$viewClass['label']}} control-label">
+        @if(old($column, $value))
+            <?php $oss_file_url = config('alioss')['OSS_URL'].'/'.$value;?>
+            <a href="{{$oss_file_url}}" target="_blank">{{$label}}</a>
+        @else
+            <a href="javascript:;" target="_blank">{{$label}}</a>
+        @endif
+    </label>
     <div class="{{$viewClass['field']}}">
         @include('admin::form.error')
-        <?php $oss_url = config('alioss')['OSS_URL'];?>
         @if(old($column, $value))
             <div class="input-group file-caption-main">
                 <div class="file-caption form-control  kv-fileinput-caption icon-visible" tabindex="500">
